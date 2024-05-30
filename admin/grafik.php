@@ -158,9 +158,10 @@
               <!-- AREA CHART -->
                 <div class="box box-success">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Grafik Umur Pegawai</h3>
+                  <h3 class="box-title">Grafik Pembelian Aset</h3>
                   <div class="box-tools pull-right">
                     <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+
                     <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                   </div>
                 </div>
@@ -176,7 +177,7 @@
 			 <!-- DONUT CHART -->
               <div class="box box-danger">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Grafik Golongan PNS</h3>
+                  <h3 class="box-title">Grafik jumlah aset</h3>
                   <div class="box-tools pull-right">
                     <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                     <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -209,10 +210,13 @@
           element: 'sales-chart',
           resize: true,
           colors: ["#3c8dbc", "#f56954", "#00a65a","#f47721", "#1d437f", "#5fafc5", "#fbc727"],
-          data: [<?php $sql=mysqli_query($koneksi,"SELECT COUNT(pegawai.gol) as jlh,golongan.id_gol,golongan.nama_gol FROM golongan LEFT JOIN pegawai ON pegawai.gol = golongan.id_gol GROUP BY golongan.id_gol ORDER BY id_gol ASC");
-while ($t=mysqli_fetch_array($sql)){ ?>
-            {label: "<?=$t[nama_gol]?>", value: <?=$t[jlh]?>},
-			<?php } ?>
+          data: [
+            <?php 
+            $sql=mysqli_query($koneksi,"SELECT * FROM aset ORDER BY id_aset ASC");
+            while ($t=mysqli_fetch_array($sql)){ 
+              echo "{label: '" . $t['nama_aset'] . "', value: " . $t['jumlah'] . "},";
+            }
+            ?>
           ],
           hideHover: 'auto'
         });
@@ -221,33 +225,22 @@ while ($t=mysqli_fetch_array($sql)){ ?>
           element: 'bar-chart',
           resize: true,
           data: [<?php
-$usia ="SELECT nip, nama_pegawai, tgl_lahir, jenis_kelamin, TIMESTAMPDIFF(YEAR, tgl_lahir, CURDATE()) AS umur FROM pegawai";
+$usia ="SELECT nama_aset, tgl_beli,jumlah, TIMESTAMPDIFF(YEAR, tgl_beli, CURDATE()) AS umur FROM aset";
 $rekapumur=mysqli_query($koneksi,"
 SELECT 
-COUNT(IF(umur <= 25,1,NULL)) AS '21 - 25',
-COUNT(IF(umur BETWEEN 26 and 30,1,NULL)) AS '26 - 30',
-COUNT(IF(umur BETWEEN 31 and 35,1,NULL)) AS '31 - 35',
-COUNT(IF(umur BETWEEN 36 and 40,1,NULL)) AS '36 - 40',
-COUNT(IF(umur BETWEEN 41 and 45,1,NULL)) AS '41 - 45',
-COUNT(IF(umur BETWEEN 46 and 50,1,NULL)) AS '46 - 50',
-COUNT(IF(umur >= 51,1,NULL)) AS '>51',
-COUNT(IF(jenis_kelamin = 'Laki-Laki', jenis_kelamin,NULL)) AS 'Laki-Laki',
-COUNT(IF(jenis_kelamin = 'Perempuan', jenis_kelamin,NULL)) AS 'Perempuan'
-FROM (select nip, nama_pegawai, tgl_lahir, jenis_kelamin, TIMESTAMPDIFF(YEAR, tgl_lahir, CURDATE()) AS umur from pegawai) as dummy_table");
-($dataumur=mysqli_fetch_array($rekapumur));
+tgl_beli,
+SUM(jumlah) as total_jumlah
+FROM aset
+GROUP BY tgl_beli");
+while ($dataumur=mysqli_fetch_array($rekapumur)){
+  echo "{tgl_beli: '" . $dataumur['tgl_beli'] . "', total_jumlah: " . $dataumur['total_jumlah'] . "},";
+}
 ?>
-            {y: '< 25 ', a: <?=$dataumur['21 - 25']?>},
-            {y: '26 - 30', a: <?=$dataumur['26 - 30']?>},
-            {y: '31 - 35', a: <?=$dataumur['31 - 35']?>},
-            {y: '36 - 40', a: <?=$dataumur['36 - 40']?>},
-            {y: '41 - 45', a: <?=$dataumur['41 - 45']?>},
-            {y: '46 - 50', a: <?=$dataumur['41 - 45']?>},
-            {y: ' > 51', a: <?=$dataumur['>51']?>}
           ],
-          barColors: ['#00a65a', '#f56954'],
-          xkey: 'y',
-          ykeys: ['a'],
-          labels: ['pegawai'],
+          xkey: 'tgl_beli',
+          ykeys: ['total_jumlah'],
+          labels: ['Jumlah ASET'],
+          barColors: ['#00a65a'],
           hideHover: 'auto'
         });
       });

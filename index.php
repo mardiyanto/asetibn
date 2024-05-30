@@ -45,7 +45,7 @@ include "koneksi.php";
 						<div class="content">
 							<div class="inner">
 								<h1>SELAMAT DATANG</h1>
-								<h3>SI <?php echo"$k_k[nama_app]";?> <?php echo"$k_k[alias]";?> </h3><p>Satu Aplikasi Untuk Kemudahan Implementasi P-D-C-A <?php echo"$k_k[nama]";?></p>
+								<h3>SI <?php echo"$k_k[nama_app]";?>  </h3><p>Satu Aplikasi Untuk Kemudahan Data Aset <?php echo"$k_k[nama]";?></p>
 												<?php 
         if(isset($_GET['alert'])){
           if($_GET['alert'] == "gagal"){
@@ -84,19 +84,20 @@ include "koneksi.php";
 										<div class="field half">
 											<label for="name">User Name</label>
 											<input type="text" placeholder="Username" name="username" required="required" autocomplete="off" id="name" />
+											<input type="hidden" value='administrator' name="sebagai"  />
 										</div>
 										<div class="field half">
 											<label for="email">Password</label>
 											<input  type="password"  placeholder="Password" name="password" required="required" autocomplete="off" id="email" />
 										</div>
-											<div class="field">
+											<!-- <div class="field">
 												<label for="demo-category">Login Sebagai</label>
 												<select  id="demo-category" name="sebagai" required="required">
 													<option value="">- Pilih Login -</option>
 													<option value="administrator">ADMIN</option>
 													<option value="pegawai">PEGAWAI</option>
 												</select>
-											</div>
+											</div> -->
 									</div>
 									<ul class="actions">
 										<li><input type="submit" value="login" class="primary" /></li>
